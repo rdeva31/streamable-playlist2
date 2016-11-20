@@ -9,7 +9,15 @@
         
         
         <script type="text/javascript">
-            var videos = window.location.href.split("?")[1].split("&");
+            /* Split the URL into base & param segments.  Since I can't be
+             * bothered to use proper libraries, just throw away anything
+             * that I suspect to be malformed
+             */
+            var url_slices = window.location.href.split("?");
+            url_slices = url_slices.length == 2 ? url_slices : null;
+            
+            var default_videos = ["ww6b", "jery"];
+            var videos = url_slices ? url_slices[1].split("&") : default_videos;
             var currentVideo = -1;
             
             function localhost(url) {
