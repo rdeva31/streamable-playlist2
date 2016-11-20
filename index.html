@@ -1,0 +1,64 @@
+<html>
+    <head>
+        <title id="title">Streamable Playlist</title>
+    </head>
+    <body>
+        <div center>
+            <video id="player" src="" controls height="100%"></video>
+        </div>
+        
+        
+        <script type="text/javascript">
+            var videos = window.location.href.split("?")[1].split("&");
+                var currentVideo = -1;
+                
+                function localhost(url) {
+                    /* Idiot hack to avoid cross origin policy errors when testing
+                     * locally.  Basically add a "http" to the front of 
+                     * "//urls/like/this"
+                     */
+                    if (window.location.href.startsWith("file://"))
+                        url = "http:" + url;
+                    
+                    return url;
+                }
+                
+                function dbg(text) {
+                    console.log(text);
+                }
+                
+                function playNext() {
+                    player = document.getElementById("player");
+                    
+                    currentVideo += 1;
+                    if (currentVideo == videos.length) {
+                        player.src = ""; /* Releases video-related memory */
+                        return;
+                    }
+                    
+                    url = localhost("//api.streamable.com/videos/" + videos[currentVideo]);
+                    
+                    var xhr = new XMLHttpRequest()
+                    xhr.open("GET", url, false);
+                    xhr.send(null);
+                    response = JSON.parse(xhr.responseText)
+                    dbg(response)
+                    
+                    if (response["status"] != 2 /* Video available */) {
+                        dbg(videos[currentVideo] + " is being skipped because status is " + response["status"])
+                        playNext();
+                    }
+                    
+                    player.pause();
+                    document.title = response["title"] || document.getElementById("title").text;
+                    player.src = localhost(response["files"]["mp4"]["url"]);
+                    player.onended = playNext;
+                    player.load();
+                    player.play();
+                }
+                
+                /* Kick it off */
+                playNext();
+        </script>
+    </body>
+</html>
