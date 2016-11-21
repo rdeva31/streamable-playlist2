@@ -9,14 +9,16 @@
         
         
         <script type="text/javascript">
-            function dbg(text) {
-                console.log(text);
-            }
+            /* Split the URL into base & param segments.  Since I can't be
+             * bothered to use proper libraries, just throw away anything
+             * that I suspect to be malformed
+             */
+            var url_slices = window.location.href.split("?");
+            url_slices = url_slices.length == 2 ? url_slices : null;
             
-            function referrer_ok() {
-                /* Shitty way to control access to this page */
-                return !!document.referrer.match("reddit.com");
-            }
+            var default_videos = ["ww6b", "jery"];
+            var videos = url_slices ? url_slices[1].split("&") : default_videos;
+            var currentVideo = -1;
             
             function localhost(url) {
                 /* Idiot hack to avoid cross origin policy errors when testing
@@ -29,18 +31,10 @@
                 return url;
             }
             
-            /* Split the URL into base & param segments.  Since I can't be
-             * bothered to use proper libraries, just throw away anything
-             * that I suspect to be malformed
-             */
-            var url_slices = window.location.href.split("?");
-            url_slices = url_slices.length == 2 ? url_slices : null;
+            function dbg(text) {
+                console.log(text);
+            }
             
-            var default_videos = ["ww6b", "jery"];
-            var videos = url_slices && referrer_ok() ?
-                url_slices[1].split("&") : default_videos;
-            var currentVideo = -1;
-
             function playNext() {
                 player = document.getElementById("player");
                 
