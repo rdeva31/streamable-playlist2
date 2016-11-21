@@ -13,7 +13,7 @@
                 console.log(text);
             }
             
-            function referrer_ok() {
+            function referrerOk() {
                 /* Shitty way to control access to this page */
                 return !!document.referrer.match("reddit.com");
             }
@@ -37,7 +37,7 @@
             url_slices = url_slices.length == 2 ? url_slices : null;
             
             var default_videos = ["ww6b", "jery"];
-            var videos = url_slices && referrer_ok() ?
+            var videos = url_slices && referrerOk() ?
                 url_slices[1].split("&") : default_videos;
             var currentVideo = -1;
 
